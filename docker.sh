@@ -423,6 +423,10 @@ run-installer() {
   if [[ ! -f docker-compose.yml ]]; then
     curl -fsSL https://raw.githubusercontent.com/JoaoDEVWHADS/AzuraCast/$AZURACAST_RELEASE_BRANCH/docker-compose.sample.yml -o docker-compose.yml
   fi
+  if [[ ! -f uninstall-dev.sh ]]; then
+    curl -fsSL https://raw.githubusercontent.com/JoaoDEVWHADS/AzuraCast/$AZURACAST_RELEASE_BRANCH/uninstall-dev.sh -o uninstall-dev.sh
+    chmod a+x uninstall-dev.sh
+  fi
 
   touch docker-compose.new.yml
 
@@ -601,6 +605,10 @@ update() {
     else
       rm docker.new.sh
     fi
+
+    # Update/download uninstall script
+    curl -fsSL https://raw.githubusercontent.com/JoaoDEVWHADS/AzuraCast/$AZURACAST_RELEASE_BRANCH/uninstall-dev.sh -o uninstall-dev.sh
+    chmod a+x uninstall-dev.sh
 
     # Check Docker version.
     if [[ $PODMAN_MODE -eq 0 ]]; then
