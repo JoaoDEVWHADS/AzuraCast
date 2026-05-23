@@ -154,12 +154,12 @@ final class RestoreCommand extends AbstractDatabaseCommand
 
         $this->runCommand(
             $output,
-            'azuracast:settings:set sync_disabled true',
+            'azuracast:setup --update'
         );
 
         $this->runCommand(
             $output,
-            'azuracast:setup --update'
+            'azuracast:settings:set sync_disabled true',
         );
 
         $endTime = microtime(true);

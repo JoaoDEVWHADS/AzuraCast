@@ -28,22 +28,52 @@ final class SettingsRepository extends Repository
     {
         static $settingsId = null;
 
-        if (null !== $settingsId) {
-            $settings = $this->repository->find($settingsId);
-            if ($settings instanceof Settings) {
+        try {
+            $conn = $this->em->getConnection();
+            $columns = $conn->fetchFirstColumn("SHOW COLUMNS FROM settings LIKE 'enable_liquidsoap_editing'");
+            if (empty($columns)) {
+                $settings = new Settings();
+                $settings->app_unique_identifier = '00000000-0000-0000-0000-000000000000';
                 return $settings;
+            }
+        } catch (\Throwable) {
+            $settings = new Settings();
+            $settings->app_unique_identifier = '00000000-0000-0000-0000-000000000000';
+            return $settings;
+        }
+
+        if (null !== $settingsId) {
+            try {
+                $settings = $this->repository->find($settingsId);
+                if ($settings instanceof Settings) {
+                    return $settings;
+                }
+            } catch (\Throwable) {
             }
         }
 
-        $settings = $this->repository->findOneBy([]);
+        try {
+            $settings = $this->repository->findOneBy([]);
+        } catch (\Throwable) {
+            $settings = null;
+        }
 
         if (!($settings instanceof Settings)) {
             $settings = new Settings();
-            $this->em->persist($settings);
-            $this->em->flush();
+            try {
+                $this->em->persist($settings);
+                $this->em->flush();
+            } catch (\Throwable) {
+                $settings->app_unique_identifier = '00000000-0000-0000-0000-000000000000';
+            }
         }
 
-        $settingsId = $settings->app_unique_identifier;
+        try {
+            $settingsId = $settings->app_unique_identifier;
+        } catch (\Throwable) {
+            $settings->app_unique_identifier = '00000000-0000-0000-0000-000000000000';
+            $settingsId = $settings->app_unique_identifier;
+        }
 
         return $settings;
     }

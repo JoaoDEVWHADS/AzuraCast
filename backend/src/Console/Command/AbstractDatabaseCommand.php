@@ -106,7 +106,7 @@ abstract class AbstractDatabaseCommand extends CommandAbstract
     ): string {
         $io->section(__('Backing up initial database state...'));
 
-        $tempDir = StorageLocation::DEFAULT_BACKUPS_PATH;
+        $tempDir = '/tmp';
         $dbDumpPath = $tempDir . '/pre_migration_db.sql';
 
         $fs = new Filesystem();
